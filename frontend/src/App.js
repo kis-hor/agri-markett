@@ -21,6 +21,8 @@ import {
   OrderDetailsPage,
   TrackOrderPage,
   UserInbox,
+  BlogsPage,
+  
 } from "./routes/Routes.js";
 import {
   ShopDashboardPage,
@@ -36,6 +38,8 @@ import {
   ShopSettingsPage,
   ShopWithDrawMoneyPage,
   ShopInboxPage,
+  ShopCreateBlogs,
+  ShopAllBlogs
 } from "./routes/ShopRoutes";
 import {
   AdminDashboardPage,
@@ -44,7 +48,8 @@ import {
   AdminDashboardOrders,
   AdminDashboardProducts,
   AdminDashboardEvents,
-  AdminDashboardWithdraw
+  AdminDashboardWithdraw,
+  AdminDashboardBlogs
 } from "./routes/AdminRoutes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -56,30 +61,25 @@ import { ShopHomePage } from "./ShopRoutes.js";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute";
 import { getAllProducts } from "./redux/actions/product";
 import { getAllEvents } from "./redux/actions/event";
+import { getAllBlogs } from "./redux/actions/blog"; // Add this line
 import axios from "axios";
 import { server } from "./server";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+
 
 const App = () => {
-  const [stripeApikey, setStripeApiKey] = useState("");
-
-  async function getStripeApikey() {
-    const { data } = await axios.get(`${server}/payment/stripeapikey`);
-    setStripeApiKey(data.stripeApikey);
-  }
+ 
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
     Store.dispatch(getAllProducts());
     Store.dispatch(getAllEvents());
-    getStripeApikey();
+    Store.dispatch(getAllBlogs()); 
+    
   }, []);
 
   return (
     <BrowserRouter>
-      {stripeApikey && (
-        <Elements stripe={loadStripe(stripeApikey)}>
+      
           <Routes>
             <Route
               path="/payment"
@@ -90,8 +90,8 @@ const App = () => {
               }
             />
           </Routes>
-        </Elements>
-      )}
+        
+      
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -235,6 +235,35 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
+        <Route path="/blogs" element={<BlogsPage />} />
+        {/* <Route path="/blogs/:slug" element={<BlogDetailsPage />} /> */}
+        {/* Shop Blog Routes */}
+            <Route
+              path="/dashboard-create-blog"
+              element={
+                <SellerProtectedRoute>
+                  <ShopCreateBlogs />
+                </SellerProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard-blogs"
+              element={
+                <SellerProtectedRoute>
+                  <ShopAllBlogs />
+                </SellerProtectedRoute>
+              }
+            />
+
+            {/* Admin Blog Route */}
+            <Route
+              path="/admin-blogs"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminDashboardBlogs />
+                </ProtectedAdminRoute>
+              }
+            />
         <Route
           path="/dashboard-coupouns"
           element={

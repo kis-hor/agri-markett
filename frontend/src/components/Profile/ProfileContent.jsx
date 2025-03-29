@@ -28,6 +28,7 @@ const ProfileContent = ({ active }) => {
   const { user, error, successMessage } = useSelector((state) => state.user);
   const [name, setName] = useState(user && user.name);
   const [email, setEmail] = useState(user && user.email);
+  const [number, setNumber] = useState(user && user.Number);
   const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber);
   const [password, setPassword] = useState("");
   const [avatar, setAvatar] = useState(null);
@@ -127,6 +128,19 @@ const ProfileContent = ({ active }) => {
                   />
                 </div>
               </div>
+
+              
+                <div className=" w-[100%] 800px:w-[50%]">
+                  <label className="block pb-2">Phone Number</label>
+                  <input
+                    type="number"
+                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    required
+                    value={number}
+                    onChange={(e) => setNumber(e.target.value)}
+                  />
+                </div>
+
 
               <div className="w-full 800px:flex block pb-3">
                 <div className=" w-[100%] 800px:w-[50%]">

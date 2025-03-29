@@ -1,7 +1,7 @@
 import React from 'react';
-import AdminHeader from '../components/Layout/AdminHeader';
-import AdminSideBar from '../components/Admin/Layout/AdminSideBar';
-import AllBlogs from '../components/Admin/AllBlogs'; // Assuming you have an AllBlogs component
+import AdminHeader from '../components/Layout/AdminHeader'
+import AdminSideBar from '../components/Admin/Layout/AdminSideBar'
+import AllBlogs from '../components/Admin/AllBlogs';
 
 const AdminDashboardBlogs = () => {
   return (
@@ -10,7 +10,7 @@ const AdminDashboardBlogs = () => {
       <div className="w-full flex">
         <div className="flex items-start justify-between w-full">
           <div className="w-[80px] 800px:w-[330px]">
-            <AdminSideBar active={7} /> {/* Assuming blogs might be the 7th item in your admin sidebar */}
+            <AdminSideBar active={7} />
           </div>
           <AllBlogs />
         </div>

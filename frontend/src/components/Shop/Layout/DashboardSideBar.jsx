@@ -8,6 +8,7 @@ import { CiMoneyBill, CiSettings } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
+import { BsNewspaper } from "react-icons/bs"; // Import blog icon
 
 const DashboardSideBar = ({ active }) => {
   return (
@@ -77,9 +78,10 @@ const DashboardSideBar = ({ active }) => {
         </Link>
       </div>
 
+      {/* Blog Links */}
       <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-events" className="w-full flex items-center">
-          <MdOutlineLocalOffer
+        <Link to="/dashboard-blogs" className="w-full flex items-center">
+          <BsNewspaper
             size={30}
             color={`${active === 5 ? "crimson" : "#555"}`}
           />
@@ -88,13 +90,13 @@ const DashboardSideBar = ({ active }) => {
               active === 5 ? "text-[crimson]" : "text-[#555]"
             }`}
           >
-            All Events
+            All Blogs
           </h5>
         </Link>
       </div>
 
       <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-create-event" className="w-full flex items-center">
+        <Link to="/dashboard-create-blog" className="w-full flex items-center">
           <VscNewFile
             size={30}
             color={`${active === 6 ? "crimson" : "#555"}`}
@@ -104,7 +106,7 @@ const DashboardSideBar = ({ active }) => {
               active === 6 ? "text-[crimson]" : "text-[#555]"
             }`}
           >
-            Create Event
+            Create Blog
           </h5>
         </Link>
       </div>

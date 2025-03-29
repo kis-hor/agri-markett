@@ -12,7 +12,7 @@ const { isAuthenticated, isAdmin } = require("../middleware/auth");
 // create user
 router.post("/create-user", async (req, res, next) => {
   try {
-    const { name, email, password, avatar } = req.body;
+    const { name, email, password, number, avatar } = req.body;
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
@@ -27,6 +27,7 @@ router.post("/create-user", async (req, res, next) => {
       name: name,
       email: email,
       password: password,
+      number: number,
       avatar: {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
@@ -77,7 +78,7 @@ router.post(
       if (!newUser) {
         return next(new ErrorHandler("Invalid token", 400));
       }
-      const { name, email, password, avatar } = newUser;
+      const { name, email, password, number, avatar } = newUser;
 
       let user = await User.findOne({ email });
 
@@ -89,6 +90,7 @@ router.post(
         email,
         avatar,
         password,
+        number
       });
 
       sendToken(user, 201, res);
