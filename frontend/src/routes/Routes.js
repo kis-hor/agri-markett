@@ -19,6 +19,10 @@ import TrackOrderPage from "../pages/TrackOrderPage";
 import UserInbox from "../pages/UserInbox.jsx";
 import BlogsPage from "../pages/BlogsPage";
 import BlogDetailsPage from "../pages/BlogDetailsPage";
+import ForgotPassword from "../components/ForgotPassword.jsx";
+import ResetPassword from "../components/ResetPassword.jsx";
+import ShopForgotPassword from "../components/Shop/ShopForgotPassword.jsx";
+import ShopResetPassword from "../components/Shop/ShopResetPassword.jsx";
 
 export { 
     LoginPage,
@@ -41,5 +45,9 @@ export {
     TrackOrderPage,
     UserInbox,
     BlogsPage,
-    BlogDetailsPage
+    BlogDetailsPage,
+    ForgotPassword,
+    ResetPassword,
+    ShopForgotPassword,
+    ShopResetPassword
 };

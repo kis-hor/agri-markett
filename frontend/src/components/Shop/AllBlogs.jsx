@@ -4,59 +4,29 @@ import React, { useEffect } from "react";
 import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteBlog, getAllBlogs } from "../../redux/actions/blog"; // Assuming these action creators exist
+import { deleteBlog, getAllBlogs } from "../../redux/actions/blog";
 import Loader from "../Layout/Loader";
 
 const AllBlogs = () => {
-  const { blogs, isLoading } = useSelector((state) => state.blogs); // Assuming blogs slice in Redux
-  const { seller } = useSelector((state) => state.seller); // Keeping seller for consistency
-
+  const { blogs, isLoading } = useSelector((state) => state.blogs); // Ensure state.blogs matches your reducer
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Assuming we fetch blogs for a specific author/seller, adjust as needed
-    dispatch(getAllBlogs(seller._id));
-  }, [dispatch, seller._id]);
+    dispatch(getAllBlogs()); // Fetch all blogs, no seller filter
+  }, [dispatch]);
 
   const handleDelete = (id) => {
     dispatch(deleteBlog(id));
-    window.location.reload(); // Consider using a better state management approach
+    window.location.reload(); // Consider dispatching getAllBlogs() again instead
   };
 
   const columns = [
     { field: "id", headerName: "Blog ID", minWidth: 150, flex: 0.7 },
-    {
-      field: "title",
-      headerName: "Title",
-      minWidth: 180,
-      flex: 1.4,
-    },
-    {
-      field: "author",
-      headerName: "Author",
-      minWidth: 130,
-      flex: 0.6,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      minWidth: 100,
-      flex: 0.5,
-    },
-    {
-      field: "views",
-      headerName: "Views",
-      type: "number",
-      minWidth: 100,
-      flex: 0.5,
-    },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      type: "date",
-      minWidth: 130,
-      flex: 0.6,
-    },
+    { field: "title", headerName: "Title", minWidth: 180, flex: 1.4 },
+    { field: "author", headerName: "Author", minWidth: 130, flex: 0.6 },
+    { field: "status", headerName: "Status", minWidth: 100, flex: 0.5 },
+    { field: "views", headerName: "Views", type: "number", minWidth: 100, flex: 0.5 },
+    { field: "createdAt", headerName: "Created At", type: "date", minWidth: 130, flex: 0.6 },
     {
       field: "Preview",
       flex: 0.8,
@@ -64,8 +34,7 @@ const AllBlogs = () => {
       headerName: "",
       sortable: false,
       renderCell: (params) => {
-        const d = params.row.title;
-        const blog_title = d.replace(/\s+/g, "-");
+        const blog_title = params.row.title.replace(/\s+/g, "-");
         return (
           <Link to={`/blog/${blog_title}`}>
             <Button>
@@ -81,24 +50,24 @@ const AllBlogs = () => {
       minWidth: 120,
       headerName: "",
       sortable: false,
-      renderCell: (params) => {
-        return (
-          <Button onClick={() => handleDelete(params.id)}>
-            <AiOutlineDelete size={20} />
-          </Button>
-        );
-      },
+      renderCell: (params) => (
+        <Button onClick={() => handleDelete(params.id)}>
+          <AiOutlineDelete size={20} />
+        </Button>
+      ),
     },
   ];
 
-  const rows = blogs.map((blog) => ({
-    id: blog._id,
-    title: blog.title,
-    author: blog.author,
-    status: blog.status,
-    views: blog.views,
-    createdAt: new Date(blog.createdAt), // Convert to Date object for sorting
-  }));
+  const rows = blogs && Array.isArray(blogs) 
+  ? blogs.map((blog) => ({
+      id: blog._id,
+      title: blog.title || "No title",
+      author: blog.author || "Unknown",
+      status: blog.status || "Draft",
+      views: blog.views || 0,
+      createdAt: blog.createdAt ? new Date(blog.createdAt) : new Date(),
+    }))
+  : [];
 
   return (
     <>

@@ -8,67 +8,42 @@ import { server } from "../../server";
 
 const AllBlogs = () => {
   const [blogs, setBlogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`${server}/blog/admin-all-blogs`, { withCredentials: true })
       .then((res) => {
-        setBlogs(res.data.blogs);
+        console.log("API Response:", res.data);
+        setBlogs(res.data.blogs || []); // Fallback to empty array
+        setIsLoading(false);
       })
       .catch((error) => {
-        console.log("Error fetching blogs:", error);
+        console.error("Error fetching blogs:", error.response?.data || error.message);
+        setIsLoading(false);
       });
   }, []);
 
   const columns = [
     { field: "id", headerName: "Blog ID", minWidth: 150, flex: 0.7 },
-    {
-      field: "title",
-      headerName: "Title",
-      minWidth: 180,
-      flex: 1.4,
-    },
-    {
-      field: "author",
-      headerName: "Author",
-      minWidth: 130,
-      flex: 0.6,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      minWidth: 100,
-      flex: 0.5,
-    },
-    {
-      field: "views",
-      headerName: "Views",
-      type: "number",
-      minWidth: 100,
-      flex: 0.5,
-    },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      type: "date",
-      minWidth: 130,
-      flex: 0.6,
-    },
+    { field: "title", headerName: "Title", minWidth: 180, flex: 1.4 },
+    { field: "author", headerName: "Author", minWidth: 130, flex: 0.6 },
+    { field: "status", headerName: "Status", minWidth: 100, flex: 0.5 },
+    { field: "views", headerName: "Views", type: "number", minWidth: 100, flex: 0.5 },
+    { field: "createdAt", headerName: "Created At", type: "date", minWidth: 130, flex: 0.6 },
     {
       field: "Preview",
       flex: 0.8,
       minWidth: 100,
       headerName: "",
       sortable: false,
-      renderCell: (params) => {
-        return (
-          <Link to={`/blog/${params.id}`}>
-            <Button>
-              <AiOutlineEye size={20} />
-            </Button>
-          </Link>
-        );
-      },
+      renderCell: (params) => (
+        <Link to={`/blog/${params.id}`}>
+          <Button>
+            <AiOutlineEye size={20} />
+          </Button>
+        </Link>
+      ),
     },
   ];
 
@@ -78,18 +53,25 @@ const AllBlogs = () => {
     author: blog.author,
     status: blog.status,
     views: blog.views,
-    createdAt: new Date(blog.createdAt), // Convert to Date object for proper sorting
+    createdAt: new Date(blog.createdAt),
   }));
+
+  console.log("Blogs state:", blogs);
+  console.log("Rows for DataGrid:", rows);
 
   return (
     <div className="w-full mx-8 pt-1 mt-10 bg-white">
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={10}
-        disableSelectionOnClick
-        autoHeight
-      />
+      {isLoading ? (
+        <div>Loading...</div> // Replace with your Loader component if desired
+      ) : (
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={10}
+          disableSelectionOnClick
+          autoHeight
+        />
+      )}
     </div>
   );
 };

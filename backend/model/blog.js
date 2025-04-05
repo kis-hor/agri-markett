@@ -53,18 +53,6 @@ const blogSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    comments: [{
-        userId: {
-            type: String,
-        },
-        comment: {
-            type: String,
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        },
-    }],
     createdAt: {
         type: Date,
         default: Date.now,

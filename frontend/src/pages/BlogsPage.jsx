@@ -1,19 +1,35 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import BlogCard from "../components/Blog/BlogCard"; // Assuming you have a BlogCard component
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import BlogCard from "../components/Blog/BlogCard";
 import Header from "../components/Layout/Header";
 import Loader from "../components/Layout/Loader";
+import { getAllBlogs } from "../redux/actions/blog";
 
 const BlogsPage = () => {
-  const { allBlogs, isLoading } = useSelector((state) => state.blogs); // Assuming your blog data is in a 'blogs' reducer
+  const dispatch = useDispatch();
+  const { allBlogs, isLoading } = useSelector((state) => state.blogs);
+
+  useEffect(() => {
+    dispatch(getAllBlogs());
+  }, [dispatch]);
+
   return (
     <>
+      <Header activeHeading={5} />
       {isLoading ? (
         <Loader />
       ) : (
-        <div>
-          <Header activeHeading={5} /> {/* Assuming Blogs might be the 5th heading */}
-          <BlogCard active={true} data={allBlogs && allBlogs[0]} />
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold mb-8">Latest Blog Posts</h1>
+          {allBlogs && allBlogs.length > 0 ? (
+            <div className="grid gap-8">
+              {allBlogs.map((blog) => (
+                <BlogCard key={blog._id} data={blog} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500">No blog posts available</p>
+          )}
         </div>
       )}
     </>

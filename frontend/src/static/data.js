@@ -13,16 +13,8 @@ export const navItems = [
     url: "/blogs",
   },
   {
-    title: "AllBrands",
-    url: "/all-brands",
-  },
-  {
     title: "FAQs",
     url: "/faq",
-  },
-  {
-    title: "AllSellers",
-    url: "/all-sellers",
   },
 ];
 

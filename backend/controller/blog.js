@@ -12,8 +12,17 @@ router.post(
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
+      const { title, content, category, author } = req.body;
       let featuredImage = {};
       let images = [];
+
+      if (!title || !content || !category || !author) {
+        return next(new ErrorHandler("Please fill all required fields", 400));
+      }
+
+      if (!req.body.featuredImage) {
+        return next(new ErrorHandler("Featured image is required", 400));
+      }
 
       // Handle featured image upload
       if (req.body.featuredImage) {
@@ -63,12 +72,16 @@ router.post(
 // Get all blog posts
 router.get("/get-all-blogs", async (req, res, next) => {
   try {
+    console.log("Fetching all blogs from DB..."); // Debug log
     const blogs = await Blog.find().sort({ createdAt: -1 });
+    console.log(`Found ${blogs.length} blogs`); // Debug log
+    
     res.status(200).json({
       success: true,
       blogs,
     });
   } catch (error) {
+    console.error("Error fetching blogs:", error); // Debug log
     return next(new ErrorHandler(error.message, 400));
   }
 });

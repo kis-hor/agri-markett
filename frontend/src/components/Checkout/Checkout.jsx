@@ -184,7 +184,7 @@ const Checkout = () => {
                     <span>Pay with eSewa</span>
                   </div>
                   <img 
-                    src="/esewa-logo.png" 
+                    src="https://www.drupal.org/files/project-images/esewa.png" 
                     alt="eSewa" 
                     className="h-8"
                   />

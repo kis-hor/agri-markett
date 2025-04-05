@@ -360,4 +360,94 @@ router.delete(
   })
 );
 
+// forgot password
+router.post(
+  "/forgot-password",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const shop = await Shop.findOne({ email: req.body.email });
+
+      if (!shop) {
+        return next(new ErrorHandler("Shop not found with this email", 404));
+      }
+
+      const resetToken = shop.getResetPasswordToken();
+
+      await shop.save();
+
+      const resetPasswordUrl = `http://localhost:3000/shop/reset-password/${resetToken}`;
+
+      try {
+        await sendMail({
+          email: shop.email,
+          subject: "Shop Password Recovery",
+          message: `Your password reset token is: \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`,
+        });
+
+        res.status(200).json({
+          success: true,
+          message: `Email sent to ${shop.email} successfully`,
+        });
+      } catch (error) {
+        shop.resetPasswordToken = undefined;
+        shop.resetPasswordTime = undefined;
+        await shop.save();
+        return next(new ErrorHandler(error.message, 500));
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// reset password
+router.put(
+  "/reset-password/:token",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      // Find shop with unexpired reset token
+      const shop = await Shop.findOne({
+        resetPasswordTime: { $gt: Date.now() }
+      });
+
+      if (!shop) {
+        return next(
+          new ErrorHandler(
+            "Reset password url is invalid or has been expired",
+            400
+          )
+        );
+      }
+
+      // Compare the token from URL with the hashed token in DB
+      const isTokenMatched = await shop.compareResetToken(req.params.token);
+      
+      if (!isTokenMatched) {
+        return next(
+          new ErrorHandler(
+            "Reset password url is invalid or has been expired",
+            400
+          )
+        );
+      }
+
+      if (req.body.password !== req.body.confirmPassword) {
+        return next(
+          new ErrorHandler("Password doesn't match with each other", 400)
+        );
+      }
+
+      shop.password = req.body.password;
+      shop.resetPasswordToken = undefined;
+      shop.resetPasswordTime = undefined;
+
+      await shop.save();
+
+      sendShopToken(shop, 200, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;

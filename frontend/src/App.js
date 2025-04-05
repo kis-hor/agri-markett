@@ -22,7 +22,11 @@ import {
   TrackOrderPage,
   UserInbox,
   BlogsPage,
-  
+  ForgotPassword,
+  ResetPassword ,
+  ShopForgotPassword,
+  ShopResetPassword
+
 } from "./routes/Routes.js";
 import {
   ShopDashboardPage,
@@ -40,6 +44,7 @@ import {
   ShopInboxPage,
   ShopCreateBlogs,
   ShopAllBlogs
+
 } from "./routes/ShopRoutes";
 import {
   AdminDashboardPage,
@@ -109,6 +114,10 @@ const App = () => {
         <Route path="/best-selling" element={<BestSellingPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/shop-forgot-password" element={<ShopForgotPassword />} />
+        <Route path="/shop/reset-password/:token" element={<ShopResetPassword />} />
         <Route
           path="/checkout"
           element={

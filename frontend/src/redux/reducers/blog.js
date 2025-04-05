@@ -1,7 +1,13 @@
 import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoading: true,
+  loading: false,
+  error: null,
+  success: false,
+  blog: null,
+  blogs: [],       // For shop blogs
+  allBlogs: [],    // For all blogs
+  blogDetails: null
 };
 
 export const blogReducer = createReducer(initialState, {

@@ -416,4 +416,95 @@ router.delete(
   })
 );
 
+
+// forgot password
+router.post(
+  "/forgot-password",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+
+      if (!user) {
+        return next(new ErrorHandler("User not found with this email", 404));
+      }
+
+      const resetToken = user.getResetPasswordToken();
+
+      await user.save();
+
+      const resetPasswordUrl = `http://localhost:3000/reset-password/${resetToken}`;
+
+      try {
+        await sendMail({
+          email: user.email,
+          subject: "Ecommerce Password Recovery",
+          message: `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`,
+        });
+
+        res.status(200).json({
+          success: true,
+          message: `Email sent to ${user.email} successfully`,
+        });
+      } catch (error) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordTime = undefined;
+        await user.save();
+        return next(new ErrorHandler(error.message, 500));
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// reset password
+router.put(
+  "/reset-password/:token",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      // Find user with unexpired reset token
+      const user = await User.findOne({
+        resetPasswordTime: { $gt: Date.now() }
+      });
+
+      if (!user) {
+        return next(
+          new ErrorHandler(
+            "Reset password url is invalid or has been expired",
+            400
+          )
+        );
+      }
+
+      // Compare the token from URL with the hashed token in DB
+      const isTokenMatched = await user.compareResetToken(req.params.token);
+      
+      if (!isTokenMatched) {
+        return next(
+          new ErrorHandler(
+            "Reset password url is invalid or has been expired",
+            400
+          )
+        );
+      }
+
+      if (req.body.password !== req.body.confirmPassword) {
+        return next(
+          new ErrorHandler("Password doesn't match with each other", 400)
+        );
+      }
+
+      user.password = req.body.password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordTime = undefined;
+
+      await user.save();
+
+      sendToken(user, 200, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;
