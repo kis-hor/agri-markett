@@ -4,6 +4,7 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors")
 const crypto = require("crypto")
 const Order = require("../model/order")
 const ErrorHandler = require("../utils/ErrorHandler")
+const axios = require("axios") // Import axios
 
 // eSewa Configuration
 const ESEWA_URL = "https://rc-epay.esewa.com.np/api/epay/main/v2/form" // UAT URL
@@ -130,7 +131,17 @@ router.get(
       }
 
       // Decode Base64 response
-      const decodedResponse = JSON.parse(Buffer.from(response, "base64").toString())
+      let decodedResponse
+      try {
+        decodedResponse = JSON.parse(Buffer.from(response, "base64").toString())
+      } catch (error) {
+        console.error("Failed to decode response:", error)
+        return res.status(400).json({
+          success: false,
+          message: "Invalid payment response format",
+        })
+      }
+
       const { transaction_code, status, total_amount, transaction_uuid, product_code, signature } = decodedResponse
 
       // Verify signature
@@ -148,7 +159,7 @@ router.get(
         })
       }
 
-      // Find and update order
+      // Extract order ID from transaction_uuid
       const orderId = transaction_uuid.replace("order-", "")
       const order = await Order.findById(orderId)
 
@@ -191,7 +202,11 @@ router.get(
           }
         }
 
-        return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/order/success`)
+        return res.status(200).json({
+          success: true,
+          message: "Payment successful",
+          orderId: order._id,
+        })
       } else {
         order.paymentStatus = "Failed"
         await order.save()
@@ -217,11 +232,15 @@ router.get(
           }
         }
 
-        return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/order/failure`)
+        return res.status(400).json({
+          success: false,
+          message: "Payment failed",
+          orderId: order._id,
+        })
       }
     } catch (error) {
       console.error("Payment Verification Error:", error)
-      return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:3000"}/order-failure`)
+      return next(new ErrorHandler(error.message, 500))
     }
   }),
 )
@@ -302,7 +321,7 @@ router.get(
         // Add more payment methods as needed
       ]
 
-      res.status(200).json({  
+      res.status(200).json({
         success: true,
         paymentMethods,
       })
