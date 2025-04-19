@@ -26,6 +26,8 @@ import {
   ShopForgotPassword,
   ShopResetPassword,
   PaymentVerificationPage,
+  BlogPage,
+  BlogDetailsPage,
 } from "./routes/Routes.js"
 import {
   ShopDashboardPage,
@@ -60,6 +62,9 @@ import { getAllProducts } from "./redux/actions/product"
 import NotificationsPage from "./pages/NotificationsPage.jsx"
 import UserOrderDetails from "./components/UserOrderDetails"
 import { getUnreadNotificationCount } from "./redux/actions/notification"
+import NotificationToast from "./components/Shop/NotificationToast"
+import UserNotificationToast from "./components/UserNotificationToast"
+
 
 const App = () => {
   useEffect(() => {
@@ -82,6 +87,8 @@ const App = () => {
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/best-selling" element={<BestSellingPage />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route path="/blogs" element={<BlogPage />} />
+        <Route path="/blog/:id" element={<BlogDetailsPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/shop-forgot-password" element={<ShopForgotPassword />} />
@@ -310,6 +317,10 @@ const App = () => {
         pauseOnHover
         theme="dark"
       />
+
+      {/* Notification Toasts */}
+      {/* <NotificationToast />
+      <UserNotificationToast /> */}
     </BrowserRouter>
   )
 }

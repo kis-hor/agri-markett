@@ -14,7 +14,7 @@ import { useSelector } from "react-redux"
 import Cart from "../cart/Cart"
 import Wishlist from "../Wishlist/Wishlist"
 import { RxCross1 } from "react-icons/rx"
-import NotificationsDropdown from "../Notifications/NotificationsDropdown"
+import UserNotificationBell from "./UserNotificationBell"
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user)
@@ -71,7 +71,7 @@ const Header = ({ activeHeading }) => {
                 {searchData &&
                   searchData.map((i, index) => {
                     return (
-                      <Link key={index} to={`/product/${i._id}`}>
+                      <Link to={`/product/${i._id}`} key={index}>
                         <div className="w-full flex items-start-py-3">
                           <img src={`${i.images[0]?.url}`} alt="" className="w-[40px] h-[40px] mr-[10px]" />
                           <h1>{i.name}</h1>
@@ -95,7 +95,7 @@ const Header = ({ activeHeading }) => {
       <div
         className={`${
           active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
-        } transition hidden 800px:flex items-center justify-between w-full bg-[#4caf50] h-[70px]`}
+        } transition hidden 800px:flex items-center justify-between w-full bg-[#3ac821] h-[70px]`}
       >
         <div className={`${styles.section} relative ${styles.noramlFlex} justify-between`}>
           {/* categories */}
@@ -119,42 +119,46 @@ const Header = ({ activeHeading }) => {
           <div className={`${styles.noramlFlex}`}>
             <Navbar active={activeHeading} />
           </div>
-
+            {/* Added Notification Bell in mobile sidebar */}
+    
           <div className="flex">
-            {/* Notifications */}
-            {isAuthenticated && (
+              <div className={`${styles.noramlFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">
-                <NotificationsDropdown />
+                        <UserNotificationBell />
               </div>
-            )}
-
-            {/* wishlist */}
-            <div className="relative cursor-pointer mr-[15px]">
-              <AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)" onClick={() => setOpenWishlist(true)} />
-              <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                {wishlist && wishlist.length}
-              </span>
+              </div>
+            <div className={`${styles.noramlFlex}`}>
+              <div className="relative cursor-pointer mr-[15px]" onClick={() => setOpenWishlist(true)}>
+                <AiOutlineHeart size={30} color="rgb(255 255 255 / 83%)" />
+                <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
+                  {wishlist && wishlist.length}
+                </span>
+              </div>
             </div>
 
-            {/* cart */}
-            <div className="relative cursor-pointer mr-[15px]">
-              <AiOutlineShoppingCart size={30} color="rgb(255 255 255 / 83%)" onClick={() => setOpenCart(true)} />
-              <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                {cart && cart.length}
-              </span>
+            <div className={`${styles.noramlFlex}`}>
+              <div className="relative cursor-pointer mr-[15px]" onClick={() => setOpenCart(true)}>
+                <AiOutlineShoppingCart size={30} color="rgb(255 255 255 / 83%)" />
+                <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
+                  {cart && cart.length}
+                </span>
+              </div>
             </div>
 
-            {/* profile */}
-            <div className="relative cursor-pointer mr-[15px]">
-              {isAuthenticated ? (
-                <Link to="/profile">
-                  <img src={`${user?.avatar?.url}`} className="w-[35px] h-[35px] rounded-full" alt="" />
-                </Link>
-              ) : (
-                <Link to="/login">
-                  <CgProfile size={30} color="rgb(255 255 255 / 83%)" />
-                </Link>
-              )}
+            
+
+            <div className={`${styles.noramlFlex}`}>
+              <div className="relative cursor-pointer mr-[15px]">
+                {isAuthenticated ? (
+                  <Link to="/profile">
+                    <img src={`${user?.avatar?.url}`} className="w-[35px] h-[35px] rounded-full" alt="" />
+                  </Link>
+                ) : (
+                  <Link to="/login">
+                    <CgProfile size={30} color="rgb(255 255 255 / 83%)" />
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* cart popup */}
@@ -184,8 +188,13 @@ const Header = ({ activeHeading }) => {
               />
             </Link>
           </div>
-          <div>
-            <div className="relative mr-[20px]" onClick={() => setOpenCart(true)}>
+          <div className="flex items-center gap-2 mr-2">
+            {/* Added Notification Bell for mobile */}
+            <div className="relative">
+              <UserNotificationBell />
+            </div>
+            
+            <div className="relative" onClick={() => setOpenCart(true)}>
               <AiOutlineShoppingCart size={30} />
               <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px]  leading-tight text-center">
                 {cart && cart.length}
@@ -204,12 +213,17 @@ const Header = ({ activeHeading }) => {
           <div className={`fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0`}>
             <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll">
               <div className="w-full justify-between flex pr-3">
-                <div>
+                <div className="flex">
                   <div className="relative mr-[15px]" onClick={() => setOpenWishlist(true) || setOpen(false)}>
                     <AiOutlineHeart size={30} className="mt-5 ml-3" />
                     <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px]  leading-tight text-center">
                       {wishlist && wishlist.length}
                     </span>
+                  </div>
+                  
+                  {/* Added Notification Bell in mobile sidebar */}
+                  <div className="relative mt-5">
+                    <UserNotificationBell />
                   </div>
                 </div>
                 <RxCross1 size={30} className="ml-4 mt-5" onClick={() => setOpen(false)} />
@@ -228,12 +242,11 @@ const Header = ({ activeHeading }) => {
                     {searchData.map((i) => {
                       const d = i.name
 
-                      const Product_name = d.replace(/\s+/g, "-")
                       return (
-                        <Link key={i._id} to={`/product/${Product_name}`}>
+                        <Link to={`/product/${i._id}`} key={i._id}>
                           <div className="flex items-center">
-                            <img src={i.image_Url[0]?.url || "/placeholder.svg"} alt="" className="w-[50px] mr-2" />
-                            <h5>{i.name}</h5>
+                            <img src={i.images[0]?.url || "/placeholder.svg"} alt="" className="w-[50px] mr-2" />
+                            <h5>{d.slice(0, 40)}...</h5>
                           </div>
                         </Link>
                       )
@@ -244,9 +257,9 @@ const Header = ({ activeHeading }) => {
 
               <Navbar active={activeHeading} />
               <div className={`${styles.button} ml-4 !rounded-[4px]`}>
-                <Link to="/shop-create">
+                <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
                   <h1 className="text-[#fff] flex items-center">
-                    Become Seller <IoIosArrowForward className="ml-1" />
+                    {isSeller ? "Go Dashboard" : "Become Seller"} <IoIosArrowForward className="ml-1" />
                   </h1>
                 </Link>
               </div>

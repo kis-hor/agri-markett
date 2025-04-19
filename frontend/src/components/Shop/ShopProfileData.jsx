@@ -69,26 +69,7 @@ const ShopProfileData = ({ isOwner }) => {
         </div>
       )}
 
-      {active === 2 && (
-        <div className="w-full">
-          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
-            {events &&
-              events.map((i, index) => (
-                <ProductCard
-                  data={i}
-                  key={index}
-                  isShop={true}
-                  isEvent={true}
-                />
-              ))}
-          </div>
-          {events && events.length === 0 && (
-            <h5 className="w-full text-center py-5 text-[18px]">
-              No Events have for this shop!
-            </h5>
-          )}
-        </div>
-      )}
+     
 
       {active === 3 && (
         <div className="w-full">
