@@ -78,39 +78,6 @@ const DashboardSideBar = ({ active }) => {
         </Link>
       </div>
 
-      {/* Blog Links */}
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-blogs" className="w-full flex items-center">
-          <BsNewspaper
-            size={30}
-            color={`${active === 5 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 5 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            All Blogs
-          </h5>
-        </Link>
-      </div>
-
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-create-blog" className="w-full flex items-center">
-          <VscNewFile
-            size={30}
-            color={`${active === 6 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-              active === 6 ? "text-[crimson]" : "text-[#555]"
-            }`}
-          >
-            Create Blog
-          </h5>
-        </Link>
-      </div>
-
       <div className="w-full flex items-center p-4">
         <Link
           to="/dashboard-withdraw-money"

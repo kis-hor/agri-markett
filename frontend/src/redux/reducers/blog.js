@@ -57,7 +57,8 @@ export const blogReducer = createReducer(initialState, {
   },
   getAllblogsSuccess: (state, action) => {
     state.isLoading = false;
-    state.allBlogs = action.payload;
+    state.blogs = action.payload; // Or state.allBlogs depending on your needs
+    console.log("Reducer stored blogs:", action.payload); // Debug line
   },
   getAllblogsFailed: (state, action) => {
     state.isLoading = false;

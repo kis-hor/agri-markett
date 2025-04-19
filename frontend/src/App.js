@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+"use client"
+
+import { useEffect } from "react"
+import "./App.css"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import {
   LoginPage,
   SignupPage,
@@ -8,7 +10,6 @@ import {
   HomePage,
   ProductsPage,
   BestSellingPage,
-  EventsPage,
   FAQPage,
   CheckoutPage,
   PaymentPage,
@@ -21,19 +22,16 @@ import {
   OrderDetailsPage,
   TrackOrderPage,
   UserInbox,
-  BlogsPage,
   ForgotPassword,
-  ResetPassword ,
+  ResetPassword,
   ShopForgotPassword,
-  ShopResetPassword
-
-} from "./routes/Routes.js";
+  ShopResetPassword,
+} from "./routes/Routes.js"
 import {
   ShopDashboardPage,
   ShopCreateProduct,
   ShopAllProducts,
-  ShopCreateEvents,
-  ShopAllEvents,
+
   ShopAllCoupouns,
   ShopPreviewPage,
   ShopAllOrders,
@@ -42,77 +40,61 @@ import {
   ShopSettingsPage,
   ShopWithDrawMoneyPage,
   ShopInboxPage,
-  ShopCreateBlogs,
-  ShopAllBlogs
-
-} from "./routes/ShopRoutes";
+  
+} from "./routes/ShopRoutes"
 import {
   AdminDashboardPage,
   AdminDashboardUsers,
   AdminDashboardSellers,
   AdminDashboardOrders,
   AdminDashboardProducts,
-  AdminDashboardEvents,
+  
   AdminDashboardWithdraw,
-  AdminDashboardBlogs
-} from "./routes/AdminRoutes";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Store from "./redux/store";
-import { loadSeller, loadUser } from "./redux/actions/user";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
-import { ShopHomePage } from "./ShopRoutes.js";
-import SellerProtectedRoute from "./routes/SellerProtectedRoute";
-import { getAllProducts } from "./redux/actions/product";
-import { getAllEvents } from "./redux/actions/event";
-import { getAllBlogs } from "./redux/actions/blog"; // Add this line
-import axios from "axios";
-import { server } from "./server";
+  
+} from "./routes/AdminRoutes"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import Store from "./redux/store"
+import { loadSeller, loadUser } from "./redux/actions/user"
+import ProtectedRoute from "./routes/ProtectedRoute"
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute"
+import { ShopHomePage } from "./ShopRoutes.js"
+import SellerProtectedRoute from "./routes/SellerProtectedRoute"
+import { getAllProducts } from "./redux/actions/product"
 
+import { getUnreadNotificationCount } from "./redux/actions/notification" // Add this line
 
 const App = () => {
- 
   useEffect(() => {
-    Store.dispatch(loadUser());
-    Store.dispatch(loadSeller());
-    Store.dispatch(getAllProducts());
-    Store.dispatch(getAllEvents());
-    Store.dispatch(getAllBlogs()); 
+    Store.dispatch(loadUser())
+    Store.dispatch(loadSeller())
+    Store.dispatch(getAllProducts())
     
-  }, []);
+    Store.dispatch(getUnreadNotificationCount()) // Add this line
+  }, [])
 
   return (
     <BrowserRouter>
-      
-          <Routes>
-            <Route
-              path="/payment"
-              element={
-                <ProtectedRoute>
-                  <PaymentPage />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        
-      
+      <Routes>
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
-        <Route
-          path="/activation/:activation_token"
-          element={<ActivationPage />}
-        />
-        <Route
-          path="/seller/activation/:activation_token"
-          element={<SellerActivationPage />}
-        />
+        <Route path="/activation/:activation_token" element={<ActivationPage />} />
+        <Route path="/seller/activation/:activation_token" element={<SellerActivationPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/best-selling" element={<BestSellingPage />} />
-        <Route path="/events" element={<EventsPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -211,7 +193,6 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-
         <Route
           path="/order/:id"
           element={
@@ -228,51 +209,9 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-        <Route
-          path="/dashboard-create-event"
-          element={
-            <SellerProtectedRoute>
-              <ShopCreateEvents />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard-events"
-          element={
-            <SellerProtectedRoute>
-              <ShopAllEvents />
-            </SellerProtectedRoute>
-          }
-        />
-        <Route path="/blogs" element={<BlogsPage />} />
-        {/* <Route path="/blogs/:slug" element={<BlogDetailsPage />} /> */}
-        {/* Shop Blog Routes */}
-            <Route
-              path="/dashboard-create-blog"
-              element={
-                <SellerProtectedRoute>
-                  <ShopCreateBlogs />
-                </SellerProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard-blogs"
-              element={
-                <SellerProtectedRoute>
-                  <ShopAllBlogs />
-                </SellerProtectedRoute>
-              }
-            />
-
-            {/* Admin Blog Route */}
-            <Route
-              path="/admin-blogs"
-              element={
-                <ProtectedAdminRoute>
-                  <AdminDashboardBlogs />
-                </ProtectedAdminRoute>
-              }
-            />
+        
+        
+        
         <Route
           path="/dashboard-coupouns"
           element={
@@ -330,7 +269,7 @@ const App = () => {
             </ProtectedAdminRoute>
           }
         />
-         <Route
+        <Route
           path="/admin-products"
           element={
             <ProtectedAdminRoute>
@@ -338,15 +277,8 @@ const App = () => {
             </ProtectedAdminRoute>
           }
         />
-         <Route
-          path="/admin-events"
-          element={
-            <ProtectedAdminRoute>
-              <AdminDashboardEvents />
-            </ProtectedAdminRoute>
-          }
-        />
-         <Route
+        
+        <Route
           path="/admin-withdraw-request"
           element={
             <ProtectedAdminRoute>
@@ -368,7 +300,7 @@ const App = () => {
         theme="dark"
       />
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default App;
+export default App

@@ -82,16 +82,16 @@ export const deleteBlog = (id) => async (dispatch) => {
 // get all blogs
 export const getAllBlogs = () => async (dispatch) => {
   try {
-    dispatch({ type: "getAllBlogsRequest" });
+    dispatch({ type: "getAllblogsRequest" });
     const { data } = await axios.get(`${server}/blog/get-all-blogs`);
     dispatch({
-      type: "getAllBlogsSuccess",
-      payload: data.blogs,
+      type: "getAllblogsSuccess",
+      payload: data.blogs, // Ensure this matches your reducer
     });
   } catch (error) {
     dispatch({
-      type: "getAllBlogsFailed",
-      payload: error.response.data.message,
+      type: "getAllblogsFailed",
+      payload: error.response?.data?.message || error.message,
     });
   }
 };
