@@ -1,81 +1,74 @@
-import React, { useState } from "react";
-import {
-  AiOutlineArrowRight,
-  AiOutlineCamera,
-  AiOutlineDelete,
-} from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
-import { server } from "../../server";
-import styles from "../../styles/styles";
-import { DataGrid } from "@material-ui/data-grid";
-import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
-import { MdTrackChanges } from "react-icons/md";
-import { RxCross1 } from "react-icons/rx";
-import {
-  deleteUserAddress,
-  loadUser,
-  updatUserAddress,
-  updateUserInformation,
-} from "../../redux/actions/user";
-import { Country, State } from "country-state-city";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-import axios from "axios";
-import { getAllOrdersOfUser } from "../../redux/actions/order";
+"use client"
+
+import { useState } from "react"
+import { AiOutlineArrowRight, AiOutlineCamera, AiOutlineDelete } from "react-icons/ai"
+import { useDispatch, useSelector } from "react-redux"
+import { server } from "../../server"
+import styles from "../../styles/styles"
+import { DataGrid } from "@material-ui/data-grid"
+import { Button } from "@material-ui/core"
+import { Link } from "react-router-dom"
+import { MdTrackChanges } from "react-icons/md"
+import { RxCross1 } from "react-icons/rx"
+import { deleteUserAddress, loadUser, updatUserAddress, updateUserInformation } from "../../redux/actions/user"
+import { Country, State } from "country-state-city"
+import { useEffect } from "react"
+import { toast } from "react-toastify"
+import axios from "axios"
+import { getAllOrdersOfUser } from "../../redux/actions/order"
 
 const ProfileContent = ({ active }) => {
-  const { user, error, successMessage } = useSelector((state) => state.user);
-  const [name, setName] = useState(user && user.name);
-  const [email, setEmail] = useState(user && user.email);
-  const [number, setNumber] = useState(user && user.Number);
-  const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber);
-  const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState(null);
-  const dispatch = useDispatch();
+  const { user, error, successMessage } = useSelector((state) => state.user)
+  const [name, setName] = useState(user && user.name)
+  const [email, setEmail] = useState(user && user.email)
+  const [number, setNumber] = useState(user && user.Number)
+  const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber)
+  const [password, setPassword] = useState("")
+  const [avatar, setAvatar] = useState(null)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (error) {
-      toast.error(error);
-      dispatch({ type: "clearErrors" });
+      toast.error(error)
+      dispatch({ type: "clearErrors" })
     }
     if (successMessage) {
-      toast.success(successMessage);
-      dispatch({ type: "clearMessages" });
+      toast.success(successMessage)
+      dispatch({ type: "clearMessages" })
     }
-  }, [error, successMessage]);
+  }, [error, successMessage])
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(updateUserInformation(name, email, phoneNumber, password));
-  };
+    e.preventDefault()
+    dispatch(updateUserInformation(name, email, phoneNumber, password))
+  }
 
   const handleImage = async (e) => {
-    const reader = new FileReader();
+    const reader = new FileReader()
 
     reader.onload = () => {
       if (reader.readyState === 2) {
-        setAvatar(reader.result);
+        setAvatar(reader.result)
         axios
           .put(
             `${server}/user/update-avatar`,
             { avatar: reader.result },
             {
               withCredentials: true,
-            }
+            },
           )
           .then((response) => {
-            dispatch(loadUser());
-            toast.success("avatar updated successfully!");
+            dispatch(loadUser())
+            toast.success("avatar updated successfully!")
           })
           .catch((error) => {
-            toast.error(error);
-          });
+            toast.error(error)
+          })
       }
-    };
+    }
 
-    reader.readAsDataURL(e.target.files[0]);
-  };
+    reader.readAsDataURL(e.target.files[0])
+  }
 
   return (
     <div className="w-full">
@@ -90,12 +83,7 @@ const ProfileContent = ({ active }) => {
                 alt=""
               />
               <div className="w-[30px] h-[30px] bg-[#E3E9EE] rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
-                <input
-                  type="file"
-                  id="image"
-                  className="hidden"
-                  onChange={handleImage}
-                />
+                <input type="file" id="image" className="hidden" onChange={handleImage} />
                 <label htmlFor="image">
                   <AiOutlineCamera />
                 </label>
@@ -128,8 +116,6 @@ const ProfileContent = ({ active }) => {
                   />
                 </div>
               </div>
-
-
 
               <div className="w-full 800px:flex block pb-3">
                 <div className=" w-[100%] 800px:w-[50%]">
@@ -200,17 +186,17 @@ const ProfileContent = ({ active }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
 const AllOrders = () => {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user)
+  const { orders } = useSelector((state) => state.order)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, []);
+    dispatch(getAllOrdersOfUser(user._id))
+  }, [])
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
@@ -221,9 +207,7 @@ const AllOrders = () => {
       minWidth: 130,
       flex: 0.7,
       cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
+        return params.getValue(params.id, "status") === "Delivered" ? "greenColor" : "redColor"
       },
     },
     {
@@ -253,52 +237,45 @@ const AllOrders = () => {
         return (
           <>
             <Link to={`/user/order/${params.id}`}>
-              <Button>
-                <AiOutlineArrowRight size={20} />
+              <Button className="bg-green-500 text-white px-4 py-2 rounded">
+                View Details <AiOutlineArrowRight size={20} className="ml-2" />
               </Button>
             </Link>
           </>
-        );
+        )
       },
     },
-  ];
+  ]
 
-  const row = [];
+  const row = []
 
   orders &&
     orders.forEach((item) => {
       row.push({
         id: item._id,
         itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
+        total: "Rs. " + item.totalPrice,
         status: item.status,
-      });
-    });
+      })
+    })
 
   return (
     <div className="pl-8 pt-1">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSize={10}
-        disableSelectionOnClick
-        autoHeight
-      />
+      <DataGrid rows={row} columns={columns} pageSize={10} disableSelectionOnClick autoHeight />
     </div>
-  );
-};
+  )
+}
 
 const AllRefundOrders = () => {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user)
+  const { orders } = useSelector((state) => state.order)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, []);
+    dispatch(getAllOrdersOfUser(user._id))
+  }, [])
 
-  const eligibleOrders =
-    orders && orders.filter((item) => item.status === "Processing refund");
+  const eligibleOrders = orders && orders.filter((item) => item.status === "Processing refund")
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
@@ -309,9 +286,7 @@ const AllRefundOrders = () => {
       minWidth: 130,
       flex: 0.7,
       cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
+        return params.getValue(params.id, "status") === "Delivered" ? "greenColor" : "redColor"
       },
     },
     {
@@ -346,44 +321,38 @@ const AllRefundOrders = () => {
               </Button>
             </Link>
           </>
-        );
+        )
       },
     },
-  ];
+  ]
 
-  const row = [];
+  const row = []
 
   eligibleOrders &&
     eligibleOrders.forEach((item) => {
       row.push({
         id: item._id,
         itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
+        total: "Rs." + item.totalPrice,
         status: item.status,
-      });
-    });
+      })
+    })
 
   return (
     <div className="pl-8 pt-1">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSize={10}
-        autoHeight
-        disableSelectionOnClick
-      />
+      <DataGrid rows={row} columns={columns} pageSize={10} autoHeight disableSelectionOnClick />
     </div>
-  );
-};
+  )
+}
 
 const TrackOrder = () => {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user)
+  const { orders } = useSelector((state) => state.order)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, []);
+    dispatch(getAllOrdersOfUser(user._id))
+  }, [])
 
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
@@ -394,9 +363,7 @@ const TrackOrder = () => {
       minWidth: 130,
       flex: 0.7,
       cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
+        return params.getValue(params.id, "status") === "Delivered" ? "greenColor" : "redColor"
       },
     },
     {
@@ -431,71 +398,59 @@ const TrackOrder = () => {
               </Button>
             </Link>
           </>
-        );
+        )
       },
     },
-  ];
+  ]
 
-  const row = [];
+  const row = []
 
   orders &&
     orders.forEach((item) => {
       row.push({
         id: item._id,
         itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
+        total: "Rs. " + item.totalPrice,
         status: item.status,
-      });
-    });
+      })
+    })
 
   return (
     <div className="pl-8 pt-1">
-      <DataGrid
-        rows={row}
-        columns={columns}
-        pageSize={10}
-        disableSelectionOnClick
-        autoHeight
-      />
+      <DataGrid rows={row} columns={columns} pageSize={10} disableSelectionOnClick autoHeight />
     </div>
-  );
-};
+  )
+}
 
 const ChangePassword = () => {
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
 
   const passwordChangeHandler = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     await axios
       .put(
         `${server}/user/update-user-password`,
         { oldPassword, newPassword, confirmPassword },
-        { withCredentials: true }
+        { withCredentials: true },
       )
       .then((res) => {
-        toast.success(res.data.success);
-        setOldPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
+        toast.success(res.data.success)
+        setOldPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
-      });
-  };
+        toast.error(error.response.data.message)
+      })
+  }
   return (
     <div className="w-full px-5">
-      <h1 className="block text-[25px] text-center font-[600] text-[#000000ba] pb-2">
-        Change Password
-      </h1>
+      <h1 className="block text-[25px] text-center font-[600] text-[#000000ba] pb-2">Change Password</h1>
       <div className="w-full">
-        <form
-          aria-required
-          onSubmit={passwordChangeHandler}
-          className="flex flex-col items-center"
-        >
+        <form aria-required onSubmit={passwordChangeHandler} className="flex flex-col items-center">
           <div className=" w-[100%] 800px:w-[50%] mt-5">
             <label className="block pb-2">Enter your old password</label>
             <input
@@ -535,19 +490,19 @@ const ChangePassword = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Address = () => {
-  const [open, setOpen] = useState(false);
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
-  const [zipCode, setZipCode] = useState();
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [addressType, setAddressType] = useState("");
-  const { user } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false)
+  const [country, setCountry] = useState("")
+  const [city, setCity] = useState("")
+  const [zipCode, setZipCode] = useState()
+  const [address1, setAddress1] = useState("")
+  const [address2, setAddress2] = useState("")
+  const [addressType, setAddressType] = useState("")
+  const { user } = useSelector((state) => state.user)
+  const dispatch = useDispatch()
 
   const addressTypeData = [
     {
@@ -559,38 +514,29 @@ const Address = () => {
     {
       name: "Office",
     },
-  ];
+  ]
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (addressType === "" || country === "" || city === "") {
-      toast.error("Please fill all the fields!");
+      toast.error("Please fill all the fields!")
     } else {
-      dispatch(
-        updatUserAddress(
-          country,
-          city,
-          address1,
-          address2,
-          zipCode,
-          addressType
-        )
-      );
-      setOpen(false);
-      setCountry("");
-      setCity("");
-      setAddress1("");
-      setAddress2("");
-      setZipCode(null);
-      setAddressType("");
+      dispatch(updatUserAddress(country, city, address1, address2, zipCode, addressType))
+      setOpen(false)
+      setCountry("")
+      setCity("")
+      setAddress1("")
+      setAddress2("")
+      setZipCode(null)
+      setAddressType("")
     }
-  };
+  }
 
   const handleDelete = (item) => {
-    const id = item._id;
-    dispatch(deleteUserAddress(id));
-  };
+    const id = item._id
+    dispatch(deleteUserAddress(id))
+  }
 
   return (
     <div className="w-full px-5">
@@ -598,15 +544,9 @@ const Address = () => {
         <div className="fixed w-full h-screen bg-[#0000004b] top-0 left-0 flex items-center justify-center ">
           <div className="w-[35%] h-[80vh] bg-white rounded shadow relative overflow-y-scroll">
             <div className="w-full flex justify-end p-3">
-              <RxCross1
-                size={30}
-                className="cursor-pointer"
-                onClick={() => setOpen(false)}
-              />
+              <RxCross1 size={30} className="cursor-pointer" onClick={() => setOpen(false)} />
             </div>
-            <h1 className="text-center text-[25px] font-Poppins">
-              Add New Address
-            </h1>
+            <h1 className="text-center text-[25px] font-Poppins">Add New Address</h1>
             <div className="w-full">
               <form aria-required onSubmit={handleSubmit} className="w-full">
                 <div className="w-full block p-4">
@@ -624,11 +564,7 @@ const Address = () => {
                       </option>
                       {Country &&
                         Country.getAllCountries().map((item) => (
-                          <option
-                            className="block pb-2"
-                            key={item.isoCode}
-                            value={item.isoCode}
-                          >
+                          <option className="block pb-2" key={item.isoCode} value={item.isoCode}>
                             {item.name}
                           </option>
                         ))}
@@ -649,11 +585,7 @@ const Address = () => {
                       </option>
                       {State &&
                         State.getStatesOfCountry(country).map((item) => (
-                          <option
-                            className="block pb-2"
-                            key={item.isoCode}
-                            value={item.isoCode}
-                          >
+                          <option className="block pb-2" key={item.isoCode} value={item.isoCode}>
                             {item.name}
                           </option>
                         ))}
@@ -706,11 +638,7 @@ const Address = () => {
                       </option>
                       {addressTypeData &&
                         addressTypeData.map((item) => (
-                          <option
-                            className="block pb-2"
-                            key={item.name}
-                            value={item.name}
-                          >
+                          <option className="block pb-2" key={item.name} value={item.name}>
                             {item.name}
                           </option>
                         ))}
@@ -718,12 +646,7 @@ const Address = () => {
                   </div>
 
                   <div className=" w-full pb-2">
-                    <input
-                      type="submit"
-                      className={`${styles.input} mt-5 cursor-pointer`}
-                      required
-                      readOnly
-                    />
+                    <input type="submit" className={`${styles.input} mt-5 cursor-pointer`} required readOnly />
                   </div>
                 </div>
               </form>
@@ -732,13 +655,8 @@ const Address = () => {
         </div>
       )}
       <div className="flex w-full items-center justify-between">
-        <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
-          My Addresses
-        </h1>
-        <div
-          className={`${styles.button} !rounded-md`}
-          onClick={() => setOpen(true)}
-        >
+        <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">My Addresses</h1>
+        <div className={`${styles.button} !rounded-md`} onClick={() => setOpen(true)}>
           <span className="text-[#fff]">Add New</span>
         </div>
       </div>
@@ -758,26 +676,18 @@ const Address = () => {
               </h6>
             </div>
             <div className="pl-8 flex items-center">
-              <h6 className="text-[12px] 800px:text-[unset]">
-                {user && user.phoneNumber}
-              </h6>
+              <h6 className="text-[12px] 800px:text-[unset]">{user && user.phoneNumber}</h6>
             </div>
             <div className="min-w-[10%] flex items-center justify-between pl-8">
-              <AiOutlineDelete
-                size={25}
-                className="cursor-pointer"
-                onClick={() => handleDelete(item)}
-              />
+              <AiOutlineDelete size={25} className="cursor-pointer" onClick={() => handleDelete(item)} />
             </div>
           </div>
         ))}
 
       {user && user.addresses.length === 0 && (
-        <h5 className="text-center pt-8 text-[18px]">
-          You not have any saved address!
-        </h5>
+        <h5 className="text-center pt-8 text-[18px]">You not have any saved address!</h5>
       )}
     </div>
-  );
-};
-export default ProfileContent;
+  )
+}
+export default ProfileContent

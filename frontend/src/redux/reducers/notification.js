@@ -1,99 +1,124 @@
-import { createReducer } from "@reduxjs/toolkit"
-
 const initialState = {
-  isLoading: false,
   notifications: [],
   unreadCount: 0,
+  loading: false,
+  isLoading: false,
   error: null,
   success: false,
-  message: null,
 }
 
-export const notificationReducer = createReducer(initialState, {
-  // Get all notifications
-  getAllNotificationsRequest: (state) => {
-    state.isLoading = true
-  },
-  getAllNotificationsSuccess: (state, action) => {
-    state.isLoading = false
-    state.notifications = action.payload
-  },
-  getAllNotificationsFailed: (state, action) => {
-    state.isLoading = false
-    state.error = action.payload
-  },
+export const notificationReducer = (state = initialState, action) => {
+  switch (action.type) {
+    // Get all notifications
+    case "getAllNotificationsRequest":
+      return {
+        ...state,
+        loading: true,
+      }
+    case "getAllNotificationsSuccess":
+      return {
+        ...state,
+        loading: false,
+        notifications: action.payload,
+      }
+    case "getAllNotificationsFailed":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      }
 
-  // Mark notification as read
-  markNotificationRequest: (state) => {
-    state.isLoading = true
-  },
-  markNotificationSuccess: (state, action) => {
-    state.isLoading = false
-    state.notifications = state.notifications.map((notification) =>
-      notification._id === action.payload._id ? action.payload : notification,
-    )
-    state.success = true
-  },
-  markNotificationFailed: (state, action) => {
-    state.isLoading = false
-    state.error = action.payload
-    state.success = false
-  },
+    // Get unread count
+    case "getUnreadCountRequest":
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case "getUnreadCountSuccess":
+      return {
+        ...state,
+        isLoading: false,
+        unreadCount: action.payload,
+      }
+    case "getUnreadCountFailed":
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      }
 
-  // Mark all notifications as read
-  markAllNotificationsRequest: (state) => {
-    state.isLoading = true
-  },
-  markAllNotificationsSuccess: (state) => {
-    state.isLoading = false
-    state.notifications = state.notifications.map((notification) => ({
-      ...notification,
-      status: "read",
-    }))
-    state.unreadCount = 0
-    state.success = true
-  },
-  markAllNotificationsFailed: (state, action) => {
-    state.isLoading = false
-    state.error = action.payload
-    state.success = false
-  },
+    // Mark notification as read
+    case "markNotificationRequest":
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case "markNotificationSuccess":
+      return {
+        ...state,
+        isLoading: false,
+        notifications: state.notifications.map((notification) =>
+          notification._id === action.payload._id ? { ...notification, status: "read" } : notification,
+        ),
+        unreadCount: state.unreadCount > 0 ? state.unreadCount - 1 : 0,
+      }
+    case "markNotificationFailed":
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      }
 
-  // Delete notification
-  deleteNotificationRequest: (state) => {
-    state.isLoading = true
-  },
-  deleteNotificationSuccess: (state, action) => {
-    state.isLoading = false
-    state.notifications = state.notifications.filter((notification) => notification._id !== action.payload.id)
-    state.message = action.payload.message
-    state.success = true
-  },
-  deleteNotificationFailed: (state, action) => {
-    state.isLoading = false
-    state.error = action.payload
-    state.success = false
-  },
+    // Mark all as read
+    case "markAllNotificationsRequest":
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case "markAllNotificationsSuccess":
+      return {
+        ...state,
+        isLoading: false,
+        notifications: state.notifications.map((notification) => ({
+          ...notification,
+          status: "read",
+        })),
+        unreadCount: 0,
+      }
+    case "markAllNotificationsFailed":
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      }
 
-  // Get unread notification count
-  getUnreadCountRequest: (state) => {
-    state.isLoading = true
-  },
-  getUnreadCountSuccess: (state, action) => {
-    state.isLoading = false
-    state.unreadCount = action.payload
-  },
-  getUnreadCountFailed: (state, action) => {
-    state.isLoading = false
-    state.error = action.payload
-  },
+    // Delete notification
+    case "deleteNotificationRequest":
+      return {
+        ...state,
+        isLoading: true,
+      }
+    case "deleteNotificationSuccess":
+      return {
+        ...state,
+        isLoading: false,
+        notifications: state.notifications.filter((notification) => notification._id !== action.payload.id),
+        unreadCount: state.notifications.find(
+          (notification) => notification._id === action.payload.id && notification.status === "unread",
+        )
+          ? state.unreadCount > 0
+            ? state.unreadCount - 1
+            : 0
+          : state.unreadCount,
+      }
+    case "deleteNotificationFailed":
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+      }
 
-  // Clear errors and messages
-  clearErrors: (state) => {
-    state.error = null
-  },
-  clearMessages: (state) => {
-    state.message = null
-    state.success = false
-  },
-})
+    default:
+      return state
+  }
+}

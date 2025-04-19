@@ -19,19 +19,18 @@ import {
   ShopCreatePage,
   SellerActivationPage,
   ShopLoginPage,
-  OrderDetailsPage,
   TrackOrderPage,
   UserInbox,
   ForgotPassword,
   ResetPassword,
   ShopForgotPassword,
   ShopResetPassword,
+  PaymentVerificationPage,
 } from "./routes/Routes.js"
 import {
   ShopDashboardPage,
   ShopCreateProduct,
   ShopAllProducts,
-
   ShopAllCoupouns,
   ShopPreviewPage,
   ShopAllOrders,
@@ -40,7 +39,6 @@ import {
   ShopSettingsPage,
   ShopWithDrawMoneyPage,
   ShopInboxPage,
-  
 } from "./routes/ShopRoutes"
 import {
   AdminDashboardPage,
@@ -48,9 +46,7 @@ import {
   AdminDashboardSellers,
   AdminDashboardOrders,
   AdminDashboardProducts,
-  
   AdminDashboardWithdraw,
-  
 } from "./routes/AdminRoutes"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -61,32 +57,22 @@ import ProtectedAdminRoute from "./routes/ProtectedAdminRoute"
 import { ShopHomePage } from "./ShopRoutes.js"
 import SellerProtectedRoute from "./routes/SellerProtectedRoute"
 import { getAllProducts } from "./redux/actions/product"
-
-import { getUnreadNotificationCount } from "./redux/actions/notification" // Add this line
+import NotificationsPage from "./pages/NotificationsPage.jsx"
+import UserOrderDetails from "./components/UserOrderDetails"
+import { getUnreadNotificationCount } from "./redux/actions/notification"
 
 const App = () => {
   useEffect(() => {
     Store.dispatch(loadUser())
     Store.dispatch(loadSeller())
     Store.dispatch(getAllProducts())
-    
-    Store.dispatch(getUnreadNotificationCount()) // Add this line
+    Store.dispatch(getUnreadNotificationCount())
   }, [])
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/payment"
-          element={
-            <ProtectedRoute>
-              <PaymentPage />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-
-      <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignupPage />} />
@@ -100,6 +86,12 @@ const App = () => {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/shop-forgot-password" element={<ShopForgotPassword />} />
         <Route path="/shop/reset-password/:token" element={<ShopResetPassword />} />
+        <Route path="/order/success" element={<OrderSuccessPage />} />
+        <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
+        <Route path="/shop-create" element={<ShopCreatePage />} />
+        <Route path="/shop-login" element={<ShopLoginPage />} />
+
+        {/* Protected User Routes */}
         <Route
           path="/checkout"
           element={
@@ -108,7 +100,22 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/order/success" element={<OrderSuccessPage />} />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment/verify"
+          element={
+            <ProtectedRoute>
+              <PaymentVerificationPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
@@ -129,7 +136,7 @@ const App = () => {
           path="/user/order/:id"
           element={
             <ProtectedRoute>
-              <OrderDetailsPage />
+              <UserOrderDetails />
             </ProtectedRoute>
           }
         />
@@ -141,10 +148,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
-        {/* shop Routes */}
-        <Route path="/shop-create" element={<ShopCreatePage />} />
-        <Route path="/shop-login" element={<ShopLoginPage />} />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected Seller Routes */}
         <Route
           path="/shop/:id"
           element={
@@ -209,9 +222,6 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-        
-        
-        
         <Route
           path="/dashboard-coupouns"
           element={
@@ -236,7 +246,8 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-        {/* Admin Routes */}
+
+        {/* Protected Admin Routes */}
         <Route
           path="/admin/dashboard"
           element={
@@ -277,7 +288,6 @@ const App = () => {
             </ProtectedAdminRoute>
           }
         />
-        
         <Route
           path="/admin-withdraw-request"
           element={
@@ -287,6 +297,7 @@ const App = () => {
           }
         />
       </Routes>
+
       <ToastContainer
         position="bottom-center"
         autoClose={5000}

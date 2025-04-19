@@ -60,6 +60,7 @@ const Payment = () => {
       // Store order ID for tracking
       localStorage.setItem("currentOrderId", orderId)
 
+      // Create and submit the form
       const form = document.createElement("form")
       form.method = "POST"
       form.action = esewaUrl

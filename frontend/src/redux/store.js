@@ -6,8 +6,8 @@ import { eventReducer } from "./reducers/event"
 import { cartReducer } from "./reducers/cart"
 import { wishlistReducer } from "./reducers/wishlist"
 import { orderReducer } from "./reducers/order"
+import { notificationReducer } from "./reducers/notification" // Make sure this import is correct
 import { blogReducer } from "./reducers/blog"
-import { notificationReducer } from "./reducers/notification" // Add this line
 
 const Store = configureStore({
   reducer: {
@@ -18,8 +18,8 @@ const Store = configureStore({
     cart: cartReducer,
     wishlist: wishlistReducer,
     order: orderReducer,
-    blogs: blogReducer,
-    notifications: notificationReducer, // Add this line
+    notification: notificationReducer, // Add the notification reducer here
+    blog: blogReducer,
   },
 })
 

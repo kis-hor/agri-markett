@@ -20,6 +20,9 @@ import ForgotPassword from "../components/ForgotPassword"
 import ResetPassword from "../components/ResetPassword"
 import ShopForgotPassword from "../components/Shop/ShopForgotPassword"
 import ShopResetPassword from "../components/Shop/ShopResetPassword"
+import UserOrderDetails from "../components/UserOrderDetails"
+import PaymentVerificationPage from "../pages/PaymentVerificationPage.jsx"
+import NotificationsPage from "../pages/NotificationsPage.jsx"
 
 export {
   LoginPage,
@@ -44,4 +47,8 @@ export {
   ResetPassword,
   ShopForgotPassword,
   ShopResetPassword,
+  UserOrderDetails,
+  PaymentVerificationPage,
+  NotificationsPage,
 }
+

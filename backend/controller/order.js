@@ -6,6 +6,7 @@ const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth")
 const Order = require("../model/order")
 const Shop = require("../model/shop")
 const Product = require("../model/product")
+// const createNotification = require("../utils/createNotification") // Remove this line
 const axios = require("axios")
 
 // create new order
@@ -38,6 +39,18 @@ router.post(
           paymentInfo,
         })
         orders.push(order)
+
+        // Emit socket event to notify the shop owner
+        if (req.app.get("io")) {
+          req.app
+            .get("io")
+            .to(shopId)
+            .emit("newOrder", {
+              userId: user._id,
+              orderId: order._id,
+              message: `You have a new order from ${user.name}!`,
+            })
+        }
       }
 
       res.status(201).json({
@@ -123,25 +136,15 @@ router.put(
         const serviceCharge = order.totalPrice * 0.1
         await updateSellerInfo(order.totalPrice - serviceCharge)
 
-        // Create a notification for order delivery
-        if (req.app && req.app.get("io")) {
-          const notification = {
-            title: "Order Delivered",
-            message: `Your order #${order._id.toString().substring(0, 8)} has been delivered successfully.`,
-            type: "order",
-            userId: order.user._id,
-            clickAction: `/user/order/${order._id}`,
-          }
-
-          try {
-            await axios.post(
-              `${process.env.API_URL || "http://localhost:8000"}/api/v2/notification/create-notification`,
-              notification,
-            )
-            req.app.get("io").to(order.user._id).emit("new-notification", notification)
-          } catch (error) {
-            console.error("Failed to create delivery notification:", error)
-          }
+        // Emit socket event to notify the user
+        if (req.app.get("io")) {
+          req.app
+            .get("io")
+            .to(order.user._id)
+            .emit("orderDelivered", {
+              orderId: order._id,
+              message: `Your order #${order._id.toString().substring(0, 8)} has been delivered successfully. You can now leave a review!`,
+            })
         }
       }
 
@@ -191,6 +194,17 @@ router.put(
 
       order.status = req.body.status
 
+      // Emit socket event to notify the shop owner
+      if (req.app.get("io")) {
+        req.app
+          .get("io")
+          .to(order.cart[0].shopId)
+          .emit("refundRequested", {
+            orderId: order._id,
+            message: `A refund has been requested for order #${order._id.toString().substring(0, 8)}.`,
+          })
+      }
+
       await order.save({ validateBeforeSave: false })
 
       res.status(200).json({
@@ -219,6 +233,17 @@ router.put(
       order.status = req.body.status
 
       await order.save()
+
+      // Emit socket event to notify the user
+      if (req.app.get("io")) {
+        req.app
+          .get("io")
+          .to(order.user._id)
+          .emit("refundApproved", {
+            orderId: order._id,
+            message: `Your refund request for order #${order._id.toString().substring(0, 8)} has been approved.`,
+          })
+      }
 
       res.status(200).json({
         success: true,

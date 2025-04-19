@@ -24,35 +24,31 @@ export const getAllNotifications = () => async (dispatch) => {
   }
 }
 
-// Mark notification as read
-export const markNotificationAsRead = (id) => async (dispatch) => {
+// Get unread notification count
+export const getUnreadNotificationCount = () => async (dispatch) => {
   try {
     dispatch({
-      type: "markNotificationRequest",
+      type: "getUnreadCountRequest",
     })
 
-    const { data } = await axios.put(
-      `${server}/notification/mark-as-read/${id}`,
-      {},
-      {
-        withCredentials: true,
-      },
-    )
+    const { data } = await axios.get(`${server}/notification/get-unread-count`, {
+      withCredentials: true,
+    })
 
     dispatch({
-      type: "markNotificationSuccess",
-      payload: data.notification,
+      type: "getUnreadCountSuccess",
+      payload: data.unreadCount,
     })
   } catch (error) {
     dispatch({
-      type: "markNotificationFailed",
-      payload: error.response?.data?.message || "Failed to mark notification as read",
+      type: "getUnreadCountFailed",
+      payload: error.response?.data?.message || "Failed to fetch unread count",
     })
   }
 }
 
 // Mark all notifications as read
-export const markAllNotificationsAsRead = () => async (dispatch) => {
+export const markAllAsRead = () => async (dispatch) => {
   try {
     dispatch({
       type: "markAllNotificationsRequest",
@@ -68,17 +64,20 @@ export const markAllNotificationsAsRead = () => async (dispatch) => {
 
     dispatch({
       type: "markAllNotificationsSuccess",
-      payload: data.message,
     })
+
+    // Refresh the notifications list
+    dispatch(getAllNotifications())
+    dispatch(getUnreadNotificationCount())
   } catch (error) {
     dispatch({
       type: "markAllNotificationsFailed",
-      payload: error.response?.data?.message || "Failed to mark all notifications as read",
+      payload: error.response?.data?.message || "Failed to mark all as read",
     })
   }
 }
 
-// Delete notification
+// Delete a notification
 export const deleteNotification = (id) => async (dispatch) => {
   try {
     dispatch({
@@ -91,38 +90,15 @@ export const deleteNotification = (id) => async (dispatch) => {
 
     dispatch({
       type: "deleteNotificationSuccess",
-      payload: {
-        message: data.message,
-        id,
-      },
+      payload: { id, message: data.message },
     })
+
+    // Refresh the unread count
+    dispatch(getUnreadNotificationCount())
   } catch (error) {
     dispatch({
       type: "deleteNotificationFailed",
       payload: error.response?.data?.message || "Failed to delete notification",
-    })
-  }
-}
-
-// Get unread notification count
-export const getUnreadNotificationCount = () => async (dispatch) => {
-  try {
-    dispatch({
-      type: "getUnreadCountRequest",
-    })
-
-    const { data } = await axios.get(`${server}/notification/unread-count`, {
-      withCredentials: true,
-    })
-
-    dispatch({
-      type: "getUnreadCountSuccess",
-      payload: data.count,
-    })
-  } catch (error) {
-    dispatch({
-      type: "getUnreadCountFailed",
-      payload: error.response?.data?.message || "Failed to get unread count",
     })
   }
 }

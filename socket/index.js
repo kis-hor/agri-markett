@@ -6,10 +6,6 @@ const app = express()
 const server = http.createServer(app)
 const io = socketIO(server)
 
-require("dotenv").config({
-  path: "./.env",
-})
-
 app.use(cors())
 app.use(express.json())
 
@@ -29,7 +25,7 @@ const removeUser = (socketId) => {
   users = users.filter((user) => user.socketId !== socketId)
 }
 
-// Find a user by userId
+// Get a user by userId
 const getUser = (userId) => {
   return users.find((user) => user.userId === userId)
 }
@@ -44,7 +40,7 @@ io.on("connection", (socket) => {
     io.emit("getUsers", users)
   })
 
-  // Send and get message
+  // Send and get messages
   socket.on("sendMessage", ({ senderId, receiverId, text, images }) => {
     const user = getUser(receiverId)
     if (user) {
@@ -57,21 +53,10 @@ io.on("connection", (socket) => {
   })
 
   // Send notification
-  socket.on("sendNotification", ({ userId, notification }) => {
-    const user = getUser(userId)
+  socket.on("sendNotification", (data) => {
+    const user = getUser(data.userId)
     if (user) {
-      io.to(user.socketId).emit("getNotification", notification)
-    }
-  })
-
-  // Update order status
-  socket.on("updateOrderStatus", ({ userId, orderId, status }) => {
-    const user = getUser(userId)
-    if (user) {
-      io.to(user.socketId).emit("orderStatusUpdated", {
-        orderId,
-        status,
-      })
+      io.to(user.socketId).emit("getNotification", data)
     }
   })
 

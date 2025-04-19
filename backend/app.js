@@ -39,7 +39,7 @@ const conversation = require("./controller/conversation")
 const message = require("./controller/message")
 const withdraw = require("./controller/withdraw")
 const blog = require("./controller/blog")
-const notification = require("./controller/notification") // Add this line
+// const notification = require("./controller/notification") // Add this line
 
 app.use("/api/v2/user", user)
 app.use("/api/v2/conversation", conversation)
@@ -52,7 +52,7 @@ app.use("/api/v2/coupon", coupon)
 app.use("/api/v2/payment", payment)
 app.use("/api/v2/withdraw", withdraw)
 app.use("/api/v2/blog", blog)
-app.use("/api/v2/notification", notification) // Add this line
+// app.use("/api/v2/notification", notification) // Add this line
 
 // it's for ErrorHandling
 app.use(ErrorHandler)
