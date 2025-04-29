@@ -1,0 +1,432 @@
+{
+  "info": {
+    "_postman_id": "your-collection-id",
+    "name": "Agri Market API",
+    "description": "API collection for Agri Market e-commerce platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "User Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"123456\",\n    \"avatar\": \"https://example.com/avatar.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/create-user",
+              "host": ["{{base_url}}"],
+              "path": ["user", "create-user"]
+            }
+          }
+        },
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/login-user",
+              "host": ["{{base_url}}"],
+              "path": ["user", "login-user"]
+            }
+          }
+        },
+        {
+          "name": "Seller Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Shop Name\",\n    \"email\": \"shop@example.com\",\n    \"password\": \"123456\",\n    \"address\": \"Shop Address\",\n    \"phoneNumber\": \"1234567890\",\n    \"zipCode\": \"12345\",\n    \"avatar\": \"https://example.com/shop-avatar.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shop/create-shop",
+              "host": ["{{base_url}}"],
+              "path": ["shop", "create-shop"]
+            }
+          }
+        },
+        {
+          "name": "Seller Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"shop@example.com\",\n    \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shop/login-shop",
+              "host": ["{{base_url}}"],
+              "path": ["shop", "login-shop"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get User Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/getuser",
+              "host": ["{{base_url}}"],
+              "path": ["user", "getuser"]
+            }
+          }
+        },
+        {
+          "name": "Update User Info",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Name\",\n    \"email\": \"updated@example.com\",\n    \"phoneNumber\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/update-user-info",
+              "host": ["{{base_url}}"],
+              "path": ["user", "update-user-info"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shop",
+      "item": [
+        {
+          "name": "Get Shop Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{shop_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/shop/get-shop-info/:id",
+              "host": ["{{base_url}}"],
+              "path": ["shop", "get-shop-info", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Update Shop Info",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{shop_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Shop Name\",\n    \"description\": \"Updated Description\",\n    \"address\": \"Updated Address\",\n    \"phoneNumber\": \"9876543210\",\n    \"zipCode\": \"54321\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shop/update-shop-info",
+              "host": ["{{base_url}}"],
+              "path": ["shop", "update-shop-info"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{shop_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Product Name\",\n    \"description\": \"Product Description\",\n    \"category\": \"Category\",\n    \"tags\": \"tag1,tag2\",\n    \"originalPrice\": 100,\n    \"discountPrice\": 80,\n    \"stock\": 50,\n    \"images\": [\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/product/create-product",
+              "host": ["{{base_url}}"],
+              "path": ["product", "create-product"]
+            }
+          }
+        },
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/product/get-all-products",
+              "host": ["{{base_url}}"],
+              "path": ["product", "get-all-products"]
+            }
+          }
+        },
+        {
+          "name": "Get Shop Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/product/get-all-products-shop/:id",
+              "host": ["{{base_url}}"],
+              "path": ["product", "get-all-products-shop", ":id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"cart\": [\n        {\n            \"productId\": \"product_id_1\",\n            \"quantity\": 2\n        }\n    ],\n    \"shippingAddress\": {\n        \"address1\": \"123 Main St\",\n        \"address2\": \"Apt 4B\",\n        \"country\": \"Country\",\n        \"city\": \"City\",\n        \"zipCode\": \"12345\"\n    },\n    \"paymentInfo\": {\n        \"type\": \"eSewa\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/order/create-order",
+              "host": ["{{base_url}}"],
+              "path": ["order", "create-order"]
+            }
+          }
+        },
+        {
+          "name": "Get User Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/order/get-all-orders/:id",
+              "host": ["{{base_url}}"],
+              "path": ["order", "get-all-orders", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Get Shop Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{shop_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/order/get-seller-all-orders/:id",
+              "host": ["{{base_url}}"],
+              "path": ["order", "get-seller-all-orders", ":id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Create Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"groupId\": false,\n    \"members\": [\"user_id_1\", \"user_id_2\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/conversation/create-new-conversation",
+              "host": ["{{base_url}}"],
+              "path": ["conversation", "create-new-conversation"]
+            }
+          }
+        },
+        {
+          "name": "Get User Conversations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/conversation/get-all-conversation-user/:id",
+              "host": ["{{base_url}}"],
+              "path": ["conversation", "get-all-conversation-user", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Get Shop Conversations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{shop_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/conversation/get-all-conversation-seller/:id",
+              "host": ["{{base_url}}"],
+              "path": ["conversation", "get-all-conversation-seller", ":id"]
+            }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"conversationId\": \"conversation_id\",\n    \"sender\": \"user_id\",\n    \"text\": \"Hello, this is a message\",\n    \"images\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/message/create-new-message",
+              "host": ["{{base_url}}"],
+              "path": ["message", "create-new-message"]
+            }
+          }
+        },
+        {
+          "name": "Get Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/message/get-all-messages/:id",
+              "host": ["{{base_url}}"],
+              "path": ["message", "get-all-messages", ":id"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "user_token",
+      "value": "your_user_token_here",
+      "type": "string"
+    },
+    {
+      "key": "shop_token",
+      "value": "your_shop_token_here",
+      "type": "string"
+    }
+  ]
+} 
